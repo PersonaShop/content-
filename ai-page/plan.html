@@ -486,7 +486,60 @@ a{color:var(--accent)}
 
 <section>
   <div class="sec-head">
-    <span class="label">10 · Риски</span>
+    <span class="label">10 · Автопилот</span>
+    <h2>Смена каждый день, отчёт тебе утром</h2>
+    <p class="muted">Через Meta (Instagram Graph API) агент сам публикует, отвечает на комментарии и собирает статистику. Ежедневная задача запускает смену и присылает отчёт. Включается, когда ты подтвердишь границы ниже. До этого действует правило «без твоего да ничего не публикуем».</p>
+  </div>
+  <div class="pipe">
+    <div class="st"><span class="w">утро · 1</span><span class="k">Статистика</span><span class="muted" style="font-size:13px">посты за 48 ч, подписчики</span></div>
+    <div class="st"><span class="w">утро · 2</span><span class="k">Комментарии</span><span class="muted" style="font-size:13px">ответы, «ГАЙД» в директ</span></div>
+    <div class="st"><span class="w">утро · 3</span><span class="k">Разбор и новости</span><span class="muted" style="font-size:13px">1–2 правки в план</span></div>
+    <div class="st"><span class="w">день · 4</span><span class="k">Производство</span><span class="muted" style="font-size:13px">тест, моушен, рендер, голос</span></div>
+    <div class="st"><span class="w">день · 5</span><span class="k">Проверка</span><span class="muted" style="font-size:13px">чек-лист из 8 пунктов</span></div>
+    <div class="st"><span class="w">вечер · 6</span><span class="k">Публикация</span><span class="muted" style="font-size:13px">в лучшее время по статистике</span></div>
+    <div class="st you"><span class="w">тебе · 7</span><span class="k">Отчёт</span><span class="muted" style="font-size:13px">пуш, почта, файл в репо</span></div>
+  </div>
+  <div class="grid2">
+    <div class="panel pm"><span class="label">Сам, без вопросов</span>
+      <ul class="clean plus">
+        <li>Публикации из плана и шаблонов</li>
+        <li>Перестановка тем по статистике</li>
+        <li>Ответы на обычные комментарии</li>
+        <li>Гайд в директ на слово ГАЙД</li>
+        <li>Тесты хуков, времени и длины</li>
+        <li>Генерации в пределах лимита: 20 кр в день, 300 кр в месяц</li>
+      </ul></div>
+    <div class="panel pm"><span class="label">Только после твоего «да»</span>
+      <ul class="clean minus">
+        <li>Реклама и продвижение постов</li>
+        <li>Расход сверх лимита, новые сервисы</li>
+        <li>Негатив, жалобы, вопросы о деньгах</li>
+        <li>Первым писать чужим аккаунтам</li>
+        <li>Ник, аватар, шапка</li>
+        <li>Цены и запуск гайда или курса</li>
+      </ul></div>
+  </div>
+  <div class="panel">
+    <span class="label">Пример ежедневного отчёта (цифры условные)</span>
+<pre class="mono" style="margin:12px 0 0;font-size:13px;line-height:1.55;overflow-x:auto;white-space:pre">ИИ на смене · отчёт за 21.10 · день 2
+
+ПОДПИСЧИКИ  1 240 → 1 312  (+72)      ОХВАТ ЗА СУТКИ  18 400
+Вчера: Reel «Одна задача — три модели»
+  охват 14 200 · досмотр 61% · сохр 2.4% · пересл 1.1% · +58 подписок
+Сегодня в 19:00: карусель «Какую модель брать под задачу»
+Комментарии: ответил на 23, отложил 2 · «ГАЙД»: 14 человек
+Расход: Higgsfield 2 кр · API моделей $0.38
+Вывод: цена в первом кадре держит лучше вопроса → завтра так же
+
+НУЖНО ТВОЁ РЕШЕНИЕ
+1. Комментарий «цифры неверные» — ответ готов, публикую?
+2. Предложение коллаба от @account — отвечать?</pre>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">11 · Риски</span>
     <h2>Что может пойти не так</h2>
   </div>
   <div class="tbl-wrap">
@@ -506,7 +559,7 @@ a{color:var(--accent)}
 
 <section>
   <div class="sec-head">
-    <span class="label">11 · Решения за тобой</span>
+    <span class="label">12 · Решения за тобой</span>
     <h2>Что нужно, чтобы начать фазу 0</h2>
   </div>
   <ol class="qs panel">
@@ -515,8 +568,9 @@ a{color:var(--accent)}
     <li><span><b>Аккаунты.</b> Новый Instagram (Business) и Telegram-канал заводишь ты</span></li>
     <li><span><b>Бюджет и ключи.</b> Сумма в месяц и API-ключи моделей для реальных тестов</span></li>
     <li><span><b>«Да» на старт.</b> Шаблоны T1, T2, T4, T5 и пилотный рилс «одна задача — три модели»</span></li>
+    <li><span><b>Автопилот.</b> Доступ к Instagram для Claude, подтверждение границ и лимитов, время и часовой пояс отчёта</span></li>
   </ol>
 </section>
 
-<footer>Текстовая версия: <span class="mono">ai-page/STRATEGY.md</span> в репозитории content-. Помощник для разбора референсов: <span class="mono">ai-page/tools/reel_grab.js</span>.</footer>
+<footer>Текстовая версия: <span class="mono">ai-page/STRATEGY.md</span> в репозитории content-. Автопилот: <span class="mono">ai-page/AUTOPILOT.md</span>, клиент Instagram: <span class="mono">ai-page/tools/ig.py</span>. Помощник для разбора референсов: <span class="mono">ai-page/tools/reel_grab.js</span>.</footer>
 </div>
