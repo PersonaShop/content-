@@ -1,0 +1,522 @@
+<title>ИИ на смене — план запуска</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column like a shift log; each section = one block of the plan, charts sit inline at full column width */
+:root{
+  --bg:#F1F2F4; --surface:#FFFFFF; --ink:#15171C; --muted:#5D636E; --line:#D9DCE2;
+  --accent:#D9532B; --teal:#11847F; --blue:#3567CF; --violet:#7F52CC; --amber:#B97D0C;
+  --good:#1F8A4C; --bad:#C23A2B;
+  --f-display:"Unbounded","Manrope",system-ui,sans-serif;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E0F12; --surface:#17181D; --ink:#EEE8DD; --muted:#9BA1AB; --line:#2B2D35;
+  --accent:#FF7A4D; --teal:#3CC2BB; --blue:#6E9BFF; --violet:#B48CFF; --amber:#F0B43C;
+  --good:#4CC27E; --bad:#FF6B5B; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0E0F12; --surface:#17181D; --ink:#EEE8DD; --muted:#9BA1AB; --line:#2B2D35;
+  --accent:#FF7A4D; --teal:#3CC2BB; --blue:#6E9BFF; --violet:#B48CFF; --amber:#F0B43C;
+  --good:#4CC27E; --bad:#FF6B5B; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--f-body);margin:0}
+.wrap{max-width:980px;margin:0 auto;padding-inline:20px;padding-block:40px 80px;display:grid;gap:56px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(34px,6vw,60px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:clamp(22px,3.4vw,30px);font-weight:700}
+h3{font-size:17px;font-weight:500}
+p{margin:0;max-width:68ch}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.label{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+section{display:grid;gap:20px}
+.sec-head{display:grid;gap:8px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.grid2>*{min-width:0}
+ul.clean{margin:0;padding-left:1.1em;display:grid;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:12px;padding:3px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);white-space:nowrap}
+.chip b{color:var(--ink);font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+
+/* hero */
+header{display:grid;gap:18px;border-bottom:1px solid var(--line);padding-bottom:32px}
+.hero-sign{font-family:var(--f-mono);font-size:14px;border:1px dashed var(--accent);color:var(--accent);padding:10px 14px;border-radius:8px;justify-self:start}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+
+/* reference timeline */
+.tl{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.tl>div{padding:10px 12px;border-right:1px solid var(--line);min-width:0;display:grid;gap:2px;background:var(--surface)}
+.tl>div:last-child{border-right:0}
+.tl .t{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.tl .n{font-family:var(--f-display);font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.tl .v{font-family:var(--f-mono);font-size:13px;color:var(--accent)}
+@media (max-width:560px){.tl{flex-direction:column}.tl>div{border-right:0;border-bottom:1px solid var(--line);flex:none!important}}
+
+/* bars (cost drop) */
+.bars{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:end;height:220px;padding-top:10px}
+.bar{display:grid;gap:6px;justify-items:center;align-content:end;height:100%}
+.bar .b{width:100%;max-width:70px;background:var(--ink);border-radius:4px 4px 0 0}
+.bar.hi .b{background:var(--accent)}
+.bar .val{font-family:var(--f-mono);font-size:13px}
+.bar .nm{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-align:center}
+
+.pm{display:grid;gap:10px}
+.pm li::marker{color:var(--muted)}
+.plus li::marker{content:"+  ";color:var(--good)}
+.minus li::marker{content:"−  ";color:var(--bad)}
+
+/* donut */
+.donut-row{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:28px;align-items:center}
+@media (max-width:620px){.donut-row{grid-template-columns:1fr;justify-items:center}}
+.donut{width:min(220px,70vw);aspect-ratio:1;max-width:100%;border-radius:50%;
+  background:conic-gradient(var(--accent) 0 25%,var(--teal) 25% 50%,var(--blue) 50% 75%,var(--violet) 75% 90%,var(--amber) 90% 100%);
+  display:grid;place-items:center}
+.donut::after{content:"";width:58%;aspect-ratio:1;border-radius:50%;background:var(--surface)}
+.legend{display:grid;gap:12px;width:100%}
+.legend .row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline}
+.legend .pct{font-family:var(--f-mono);font-weight:600}
+.legend .ex{grid-column:2/4;font-size:14px;color:var(--muted)}
+
+/* templates */
+.tpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:12px}
+.tpl{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:6px;align-content:start}
+.tpl .id{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.tpl .nm{font-weight:700}
+.tpl .ds{font-size:14px;color:var(--muted)}
+.tpl .len{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+
+/* reel skeleton */
+.skel{display:flex;border-radius:8px;overflow:hidden;font-family:var(--f-mono);font-size:12px}
+.skel>div{padding:10px 8px;min-width:0;color:#fff;display:grid;gap:2px}
+.skel>div span{opacity:.85;font-size:11px}
+.skel .s1{background:var(--accent);flex:1.5}.skel .s2{background:var(--teal);flex:2.5}.skel .s3{background:var(--blue);flex:16}.skel .s4{background:var(--violet);flex:3}.skel .s5{background:var(--amber);flex:2}
+@media (max-width:560px){.skel{flex-direction:column}.skel>div{flex:none!important}}
+:root[data-theme="dark"] .skel>div{color:#0E0F12}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .skel>div{color:#0E0F12}}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{font-family:var(--f-mono);font-size:11px;padding:2px 7px;border-radius:4px;border:1px solid currentColor;white-space:nowrap}
+.tag.r{color:var(--accent)}.tag.c{color:var(--teal)}
+
+/* gantt */
+.gantt{display:grid;gap:10px}
+.g-axis,.g-row{position:relative;height:34px}
+.g-axis{height:22px;border-bottom:1px solid var(--line)}
+.g-axis span{position:absolute;font-family:var(--f-mono);font-size:11px;color:var(--muted);transform:translateX(2px)}
+.g-row .seg{position:absolute;top:4px;bottom:4px;border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:12px;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap}
+.g-rows{position:relative;display:grid;gap:6px}
+.g-today{position:absolute;top:-22px;bottom:0;width:0;border-left:2px dashed var(--ink);z-index:1}
+.g-today b{position:absolute;top:-4px;left:4px;font-family:var(--f-mono);font-size:10px;white-space:nowrap}
+.g-names{display:grid;gap:6px}
+:root[data-theme="dark"] .g-row .seg{color:#0E0F12}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .g-row .seg{color:#0E0F12}}
+
+/* week */
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+@media (max-width:700px){.week{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;display:grid;gap:4px;align-content:start}
+.day .d{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.day .k{font-weight:700;font-size:14px}
+.day.r{border-top:3px solid var(--accent)}.day.c{border-top:3px solid var(--teal)}
+
+/* funnel */
+.funnel{display:grid;gap:8px}
+.f-row{display:grid;grid-template-columns:minmax(0,1fr) 90px 70px;gap:12px;align-items:center}
+.f-bar{height:30px;background:var(--accent);border-radius:4px;display:flex;align-items:center;padding-left:10px;color:#fff;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;min-width:8px}
+.f-n{font-family:var(--f-mono);text-align:right}
+.f-c{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:right}
+.f-lab{font-size:14px}
+:root[data-theme="dark"] .f-bar{color:#0E0F12}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .f-bar{color:#0E0F12}}
+
+/* growth svg */
+svg text{font-family:var(--f-mono);font-size:11px;fill:var(--muted)}
+svg .gl{stroke:var(--line);stroke-width:1}
+.chart-wrap{overflow-x:auto}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:8px;counter-reset:st}
+.st{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;display:grid;gap:4px;align-content:start;position:relative}
+.st .w{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.st .k{font-weight:700;font-size:14px}
+.st.you{border:2px solid var(--accent)}
+.st.you .w{color:var(--accent)}
+.loop{font-size:14px;color:var(--muted)}
+
+.qs{display:grid;gap:10px;counter-reset:q;padding:0;margin:0;list-style:none}
+.qs li{counter-increment:q;display:grid;grid-template-columns:28px 1fr;gap:8px}
+.qs li::before{content:counter(q);font-family:var(--f-mono);color:var(--accent);font-weight:600}
+footer{border-top:1px solid var(--line);padding-top:20px;font-size:14px;color:var(--muted)}
+a{color:var(--accent)}
+@media (prefers-reduced-motion:no-preference){.bar .b{transition:height .6s ease}}
+</style>
+
+<div class="wrap">
+
+<header>
+  <span class="label">План запуска · черновик от 08.10.2026</span>
+  <h1>ИИ на смене</h1>
+  <p>Instagram-страница про эффективность ИИ-моделей и Claude Code. Сценарии, моушен, обложки, озвучку и аналитику делает ИИ-агент. Человек одобряет и публикует. Цель: охват, подписчики, лид-магнит, платный гайд, курс.</p>
+  <div class="hero-sign">Сделано Claude Code · 1 сессия · $0 на генерации</div>
+  <div class="chips">
+    <span class="chip">статус <b>ждём «да»</b></span>
+    <span class="chip">старт фазы 1 <b>20 окт</b></span>
+    <span class="chip">темп <b>5 Reels + 2 карусели / нед</b></span>
+    <span class="chip">курс <b>фев 2027</b></span>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head">
+    <span class="label">01 · Референс</span>
+    <h2>Что внутри рилса @nikitadik.ai</h2>
+    <p class="muted">Смотрел покадрово: 62 кадра + спектр звука. 31 секунда, 9:16, ни одной склейки. Это анимированный HTML-дашборд, записанный в видео. Такое Claude Code делает кодом и бесплатно.</p>
+  </div>
+  <div class="tl" aria-label="Хронометраж ролика">
+    <div style="flex:7"><span class="t">0–7 с · 01/04</span><span class="n">ДЖУН</span><span class="v">$1.00</span></div>
+    <div style="flex:7"><span class="t">7–14 с · 02/04</span><span class="n">МИДЛ</span><span class="v">$0.27</span></div>
+    <div style="flex:7"><span class="t">14–21 с · 03/04</span><span class="n">СЕНЬОР</span><span class="v">$0.14</span></div>
+    <div style="flex:10"><span class="t">21–31 с · 04/04</span><span class="n">МАРШРУТИЗАТОР</span><span class="v">$0.09 · «разница в 11 раз»</span></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <span class="label">Цена одной задачи, как в ролике</span>
+      <div class="bars" role="img" aria-label="Столбцы: 1.00, 0.27, 0.14, 0.09 доллара">
+        <div class="bar"><span class="val">$1.00</span><div class="b" style="height:160px"></div><span class="nm">джун</span></div>
+        <div class="bar"><span class="val">$0.27</span><div class="b" style="height:43px"></div><span class="nm">мидл</span></div>
+        <div class="bar"><span class="val">$0.14</span><div class="b" style="height:22px"></div><span class="nm">сеньор</span></div>
+        <div class="bar hi"><span class="val">$0.09</span><div class="b" style="height:14px"></div><span class="nm">роутер</span></div>
+      </div>
+    </div>
+    <div class="panel pm">
+      <span class="label">Дизайн и звук</span>
+      <ul class="clean">
+        <li>Тёмно-коричневый фон с сеткой, кремовый текст, оранжевое свечение</li>
+        <li>Карточки Haiku / Sonnet / Opus, полоски «усилия», счётчики токенов и денег</li>
+        <li>Импульсы бегут по линиям, как по плате</li>
+        <li>Прогресс-бар 01/04 сверху, как в сторис</li>
+        <li>Музыка + щелчки на сменах глав, голоса нет</li>
+        <li>Обложка отдельно: 3D-куб и «Одна задача: доллар или девять центов»</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel pm"><span class="label">Берём себе</span>
+      <ul class="clean plus">
+        <li>Одна мысль и конкретные деньги</li>
+        <li>Уровни джун → сеньор: зритель примеряет на себя</li>
+        <li>Прогресс-бар держит досмотр</li>
+        <li>Финальный кадр = инфографика, её сохраняют</li>
+        <li>Шаблон кодом можно переиспользовать сотни раз</li>
+      </ul></div>
+    <div class="panel pm"><span class="label">Делаем лучше</span>
+      <ul class="clean minus">
+        <li>Нет хука в первом кадре, он только на обложке</li>
+        <li>Подписи 10–12 px, с телефона не читаются</li>
+        <li>Нет голоса, CTA и повода подписаться</li>
+        <li>Цифры иллюстративные, а не замер</li>
+        <li>44 лайка: формат сильный, упаковки нет</li>
+      </ul></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">02 · Позиционирование</span>
+    <h2>Публичный эксперимент: блог ведёт ИИ</h2>
+    <p>«Эту страницу ведёт ИИ-агент. Я только нажимаю “опубликовать”». Каждый ролик заканчивается плашкой с реальным временем и стоимостью. Сам аккаунт становится главным кейсом.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel"><span class="label">Аудитория</span>
+      <ul class="clean">
+        <li><b>Предприниматели и фрилансеры без кода</b>: заявки, таблицы, контент</li>
+        <li><b>Маркетологи и SMM</b>: делать контент быстрее</li>
+        <li><b>Джуны и мидлы в IT</b>: Claude Code дешевле и точнее</li>
+      </ul></div>
+    <div class="panel"><span class="label">Шапка профиля</span>
+      <p class="mono" style="font-size:14px">ИИ ведёт этот блог сам · сравниваю модели на реальных задачах · Claude Code без кода<br>↓ гайд «Claude Code за 7 дней» — напиши ГАЙД в директ</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">03 · Контент-столпы</span>
+    <h2>Из чего состоит лента</h2>
+  </div>
+  <div class="panel donut-row">
+    <div class="donut" role="img" aria-label="Доли: сравнения 25, кейсы 25, обучение 25, закулисье 15, новости 10 процентов"></div>
+    <div class="legend">
+      <div class="row"><span class="dot" style="background:var(--accent)"></span><b>Сравнения моделей</b><span class="pct">25%</span><span class="ex">Opus vs Sonnet vs Haiku на 10 задачах кода</span></div>
+      <div class="row"><span class="dot" style="background:var(--teal)"></span><b>Кейсы «ИИ сделал»</b><span class="pct">25%</span><span class="ex">Лендинг за 7 минут и 40 центов</span></div>
+      <div class="row"><span class="dot" style="background:var(--blue)"></span><b>Обучение</b><span class="pct">25%</span><span class="ex">CLAUDE.md, MCP, субагенты, skills, hooks</span></div>
+      <div class="row"><span class="dot" style="background:var(--violet)"></span><b>Закулисье эксперимента</b><span class="pct">15%</span><span class="ex">Цифры аккаунта и как сделан ролик</span></div>
+      <div class="row"><span class="dot" style="background:var(--amber)"></span><b>Новости и релизы</b><span class="pct">10%</span><span class="ex">Что изменилось для пользователя, за 24 часа</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">04 · Форматы</span>
+    <h2>8 моушен-шаблонов для Reels</h2>
+    <p class="muted">Все шаблоны — HTML-анимация, которую агент заполняет данными и рендерит в mp4 1080×1920. Генеративное видео нужно только для редких кинематографичных вставок.</p>
+  </div>
+  <div class="tpls">
+    <div class="tpl"><span class="id">T1</span><span class="nm">Дашборд-симуляция</span><span class="ds">Экономика, токены, «уровни». Как референс, но читаемо</span><span class="len">20–35 с</span></div>
+    <div class="tpl"><span class="id">T2</span><span class="nm">VS-гонка</span><span class="ds">Сплит-экран, таймеры, финиш. Сравнения моделей</span><span class="len">15–25 с</span></div>
+    <div class="tpl"><span class="id">T3</span><span class="nm">Бар-рейс</span><span class="ds">Рейтинги, цены, бенчмарки</span><span class="len">15–20 с</span></div>
+    <div class="tpl"><span class="id">T4</span><span class="nm">Кинетическая типографика</span><span class="ds">Хуки, тезисы, новости</span><span class="len">8–15 с</span></div>
+    <div class="tpl"><span class="id">T5</span><span class="nm">Терминал-таймлапс</span><span class="ds">Команды печатаются, файлы появляются, результат</span><span class="len">20–40 с</span></div>
+    <div class="tpl"><span class="id">T6</span><span class="nm">Схема-объяснялка</span><span class="ds">Агенты, MCP, субагенты, роутинг</span><span class="len">20–30 с</span></div>
+    <div class="tpl"><span class="id">T7</span><span class="nm">До / После</span><span class="ds">Шторка и счётчики времени и денег</span><span class="len">10–20 с</span></div>
+    <div class="tpl"><span class="id">T8</span><span class="nm">Чек-лист</span><span class="ds">«5 ошибок», обратный отсчёт. Сохраняют</span><span class="len">15–25 с</span></div>
+  </div>
+  <div class="panel" style="display:grid;gap:12px">
+    <span class="label">Скелет рилса на 25 секунд, по шкале времени</span>
+    <div class="skel">
+      <div class="s1"><b>Хук</b><span>0–1.5 с</span></div>
+      <div class="s2"><b>Контекст</b><span>1.5–4 с</span></div>
+      <div class="s3"><b>3–4 бита с прогресс-баром 01/04</b><span>4–20 с</span></div>
+      <div class="s4"><b>Развязка</b><span>20–23 с</span></div>
+      <div class="s5"><b>CTA</b><span>23–25 с</span></div>
+    </div>
+    <p class="muted" style="font-size:14px">Последний кадр стыкуется с первым, чтобы ролик зацикливался. Карусели: 8–10 слайдов 1080×1350 (шпаргалки, пошаговые гайды, промпт-карточки, разборы кейсов). Сторис: 3–6 в день, опросы и закулисье.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">05 · Конвейер</span>
+    <h2>Как ИИ делает ролик от идеи до публикации</h2>
+  </div>
+  <div class="pipe">
+    <div class="st"><span class="w">Claude · 10 мин/нед</span><span class="k">Идеи</span><span class="muted" style="font-size:13px">новости, комментарии, вопросы</span></div>
+    <div class="st"><span class="w">Claude · 5 мин</span><span class="k">Сценарий</span><span class="muted" style="font-size:13px">по скелету, + подпись</span></div>
+    <div class="st"><span class="w">Claude Code · 10–30 мин</span><span class="k">Реальный тест</span><span class="muted" style="font-size:13px">замер токенов и цены</span></div>
+    <div class="st"><span class="w">Claude Code · 10–20 мин</span><span class="k">Моушен</span><span class="muted" style="font-size:13px">HTML-сцена из T1–T8</span></div>
+    <div class="st"><span class="w">Chromium + ffmpeg · 3 мин</span><span class="k">Рендер</span><span class="muted" style="font-size:13px">1080×1920, 30 к/с</span></div>
+    <div class="st"><span class="w">Fish Audio · 1 мин</span><span class="k">Голос и звук</span><span class="muted" style="font-size:13px">TTS или клон голоса</span></div>
+    <div class="st"><span class="w">Claude · 3 мин</span><span class="k">Обложка и QA</span><span class="muted" style="font-size:13px">чек-лист из 8 пунктов</span></div>
+    <div class="st you"><span class="w">ты · 2–5 мин</span><span class="k">«Да» и публикация</span><span class="muted" style="font-size:13px">без «да» ничего не уходит</span></div>
+  </div>
+  <p class="loop">Цикл замыкается еженедельным разбором: что залетело, почему, и два изменения на следующую неделю. На один рилс уходит 40–60 минут работы агента и 2–5 минут твоих.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">06 · Фазы</span>
+    <h2>Полгода: от сборки до курса</h2>
+  </div>
+  <div class="panel chart-wrap">
+    <div class="gantt" style="min-width:560px">
+      <div class="g-axis">
+        <span style="left:0%">окт</span><span style="left:17%">ноя</span><span style="left:33.5%">дек</span><span style="left:50.5%">янв</span><span style="left:67.6%">фев</span><span style="left:83%">мар</span>
+      </div>
+      <div class="g-rows">
+        <div class="g-today" style="left:3.8%"><b>сегодня</b></div>
+        <div class="g-row"><div class="seg" style="left:4.4%;width:6%;background:var(--muted)" title="Фаза 0: 9–19 окт">0</div></div>
+        <div class="g-row"><div class="seg" style="left:10.4%;width:15.4%;background:var(--accent)">1 · Запуск</div></div>
+        <div class="g-row"><div class="seg" style="left:25.8%;width:15.4%;background:var(--teal)">2 · Разгон</div></div>
+        <div class="g-row"><div class="seg" style="left:41.2%;width:19.2%;background:var(--blue)">3 · Спрос</div></div>
+        <div class="g-row"><div class="seg" style="left:67.6%;width:32.4%;background:var(--violet)">4 · Курс</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Фаза</th><th>Сроки</th><th>Reels / нед</th><th>Карусели / нед</th><th>Цель</th></tr></thead>
+      <tbody>
+        <tr><td><b>0 · Сборка</b></td><td class="num">9–19 окт</td><td class="num">—</td><td class="num">—</td><td>Имя, шапка, дизайн-система, шаблоны T1, T2, T4, T5, 9 постов в запасе</td></tr>
+        <tr><td><b>1 · Запуск</b></td><td class="num">20 окт – 16 ноя</td><td class="num">5</td><td class="num">2</td><td>Найти 2–3 формата-победителя</td></tr>
+        <tr><td><b>2 · Разгон</b></td><td class="num">17 ноя – 14 дек</td><td class="num">7</td><td class="num">2–3</td><td>Удвоить победителей, коллабы, лид-магнит, Telegram</td></tr>
+        <tr><td><b>3 · Проверка спроса</b></td><td class="num">15 дек – 18 янв</td><td class="num">7</td><td class="num">3</td><td>Лист ожидания, мини-гайд, бесплатный эфир</td></tr>
+        <tr><td><b>4 · Курс</b></td><td class="num">фев – мар 2027</td><td class="num">5–7</td><td class="num">2</td><td>Запуск курса на прогретую базу (от 300 в листе ожидания)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="panel" style="display:grid;gap:12px">
+    <span class="label">Неделя в фазе 1</span>
+    <div class="week">
+      <div class="day r"><span class="d">пн</span><span class="k">Reel</span><span class="muted" style="font-size:13px">сравнение · T1/T2</span></div>
+      <div class="day c"><span class="d">вт</span><span class="k">Карусель</span><span class="muted" style="font-size:13px">шпаргалка</span></div>
+      <div class="day r"><span class="d">ср</span><span class="k">Reel</span><span class="muted" style="font-size:13px">кейс · T5</span></div>
+      <div class="day r"><span class="d">чт</span><span class="k">Reel</span><span class="muted" style="font-size:13px">обучение · T6</span></div>
+      <div class="day c"><span class="d">пт</span><span class="k">Карусель</span><span class="muted" style="font-size:13px">гайд</span></div>
+      <div class="day r"><span class="d">сб</span><span class="k">Reel</span><span class="muted" style="font-size:13px">хук/новость · T4</span></div>
+      <div class="day r"><span class="d">вс</span><span class="k">Reel</span><span class="muted" style="font-size:13px">закулисье + итоги</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">07 · Контент-план</span>
+    <h2>Первые 4 недели, 28 публикаций</h2>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>№</th><th>Тип</th><th>Тема</th><th>Шаблон</th></tr></thead>
+      <tbody>
+        <tr><td colspan="4" class="label">Неделя 1 · манифест и первые доказательства</td></tr>
+        <tr><td class="num">1</td><td><span class="tag r">Reel</span></td><td>Этот аккаунт ведёт ИИ. Я только жму «опубликовать» (в закреп)</td><td class="num">T4+T5</td></tr>
+        <tr><td class="num">2</td><td><span class="tag r">Reel</span></td><td>Одна задача, три модели: время, цена, качество (реальный замер)</td><td class="num">T1</td></tr>
+        <tr><td class="num">3</td><td><span class="tag c">Карусель</span></td><td>Claude Code за 5 минут: что это и зачем, если не программируешь</td><td class="num">C</td></tr>
+        <tr><td class="num">4</td><td><span class="tag r">Reel</span></td><td>Попросил ИИ сделать лендинг: 7 минут, 40 центов</td><td class="num">T5+T7</td></tr>
+        <tr><td class="num">5</td><td><span class="tag r">Reel</span></td><td>5 задач бизнеса, которые агент закрывает уже сегодня</td><td class="num">T8</td></tr>
+        <tr><td class="num">6</td><td><span class="tag c">Карусель</span></td><td>Шпаргалка: какую модель брать под задачу</td><td class="num">C</td></tr>
+        <tr><td class="num">7</td><td><span class="tag r">Reel</span></td><td>Как работает ИИ-агент — за 20 секунд</td><td class="num">T6</td></tr>
+        <tr><td colspan="4" class="label">Неделя 2 · сравнения</td></tr>
+        <tr><td class="num">8</td><td><span class="tag r">Reel</span></td><td>Claude vs ChatGPT vs Gemini: одна задача вслепую</td><td class="num">T2</td></tr>
+        <tr><td class="num">9</td><td><span class="tag c">Карусель</span></td><td>CLAUDE.md: память для ИИ — готовый шаблон</td><td class="num">C</td></tr>
+        <tr><td class="num">10</td><td><span class="tag r">Reel</span></td><td>Почему ваш ИИ тупит: 3 ошибки в промпте</td><td class="num">T7</td></tr>
+        <tr><td class="num">11</td><td><span class="tag r">Reel</span></td><td>Сколько реально стоит месяц работы с ИИ: 4 сценария</td><td class="num">T3</td></tr>
+        <tr><td class="num">12</td><td><span class="tag r">Reel</span></td><td>MCP простыми словами: ИИ получает руки</td><td class="num">T6</td></tr>
+        <tr><td class="num">13</td><td><span class="tag c">Карусель</span></td><td>10 промптов для Claude Code на каждый день</td><td class="num">C</td></tr>
+        <tr><td class="num">14</td><td><span class="tag r">Reel</span></td><td>Неделя 1 эксперимента: цифры аккаунта как есть</td><td class="num">T1</td></tr>
+        <tr><td colspan="4" class="label">Неделя 3 · как это сделано</td></tr>
+        <tr><td class="num">15</td><td><span class="tag r">Reel</span></td><td>Субагенты: как один ИИ нанимает других</td><td class="num">T6</td></tr>
+        <tr><td class="num">16</td><td><span class="tag c">Карусель</span></td><td>Установить Claude Code за 10 минут, пошагово</td><td class="num">C</td></tr>
+        <tr><td class="num">17</td><td><span class="tag r">Reel</span></td><td>Этот ролик сделал ИИ. Показываю, как</td><td class="num">T5</td></tr>
+        <tr><td class="num">18</td><td><span class="tag r">Reel</span></td><td>Маршрутизация моделей: платить в 10 раз меньше (наш реальный тест)</td><td class="num">T1</td></tr>
+        <tr><td class="num">19</td><td><span class="tag r">Reel</span></td><td>Заявки из Instagram → таблица → Telegram за 15 минут</td><td class="num">T5</td></tr>
+        <tr><td class="num">20</td><td><span class="tag c">Карусель</span></td><td>7 ошибок новичков с ИИ-агентами</td><td class="num">C</td></tr>
+        <tr><td class="num">21</td><td><span class="tag r">Reel</span></td><td>Новость недели за 15 секунд</td><td class="num">T4</td></tr>
+        <tr><td colspan="4" class="label">Неделя 4 · лид-магнит</td></tr>
+        <tr><td class="num">22</td><td><span class="tag r">Reel</span></td><td>Opus vs Sonnet в коде: 10 задач, реальный счёт</td><td class="num">T2</td></tr>
+        <tr><td class="num">23</td><td><span class="tag c">Карусель</span></td><td>Гайд «Claude Code за 7 дней»: напиши ГАЙД в директ</td><td class="num">C</td></tr>
+        <tr><td class="num">24</td><td><span class="tag r">Reel</span></td><td>Skills: научи ИИ своему процессу один раз</td><td class="num">T6</td></tr>
+        <tr><td class="num">25</td><td><span class="tag r">Reel</span></td><td>Hooks: ИИ сам проверяет свою работу</td><td class="num">T7</td></tr>
+        <tr><td class="num">26</td><td><span class="tag c">Карусель</span></td><td>Тарифы ИИ: сколько стоит работать в месяц</td><td class="num">C</td></tr>
+        <tr><td class="num">27</td><td><span class="tag r">Reel</span></td><td>Дал агенту задачу и $1: что он успел</td><td class="num">T5</td></tr>
+        <tr><td class="num">28</td><td><span class="tag r">Reel</span></td><td>Месяц эксперимента: что сработало + лист ожидания курса</td><td class="num">T1</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">08 · Воронка</span>
+    <h2>Как охват превращается в курс</h2>
+    <p class="muted">Пример расчёта на месяц в базовом сценарии к 90-му дню. Это модель с типичными конверсиями, а не прогноз. Ширина полос в логарифмической шкале, иначе нижние шаги не видно.</p>
+  </div>
+  <div class="panel funnel">
+    <div class="f-row"><div><div class="f-lab">Охват Reels и каруселей</div><div class="f-bar" style="width:100%"></div></div><span class="f-n">300 000</span><span class="f-c"></span></div>
+    <div class="f-row"><div><div class="f-lab">Заходы в профиль</div><div class="f-bar" style="width:72%"></div></div><span class="f-n">9 000</span><span class="f-c">3%</span></div>
+    <div class="f-row"><div><div class="f-lab">Подписки</div><div class="f-bar" style="width:61%"></div></div><span class="f-n">2 200</span><span class="f-c">25%</span></div>
+    <div class="f-row"><div><div class="f-lab">Слово ГАЙД в директ</div><div class="f-bar" style="width:51%"></div></div><span class="f-n">600</span><span class="f-c">27%</span></div>
+    <div class="f-row"><div><div class="f-lab">Telegram-канал</div><div class="f-bar" style="width:48%"></div></div><span class="f-n">400</span><span class="f-c">67%</span></div>
+    <div class="f-row"><div><div class="f-lab">Платный мини-гайд, 990–2 990 ₽</div><div class="f-bar" style="width:24%"></div></div><span class="f-n">20</span><span class="f-c">5%</span></div>
+  </div>
+  <div class="grid2">
+    <div class="panel"><span class="label">Курс «Claude Code без кода» · 6 модулей</span>
+      <ol style="margin:8px 0 0;padding-left:1.3em;display:grid;gap:4px">
+        <li>Модели и деньги: роутинг, усилие, проверка</li>
+        <li>Claude Code с нуля, CLAUDE.md</li>
+        <li>Агенты и субагенты</li>
+        <li>MCP: Таблицы, Telegram, почта, CRM</li>
+        <li>Skills и hooks</li>
+        <li>Проекты: лендинг, бот, заявки, контент-конвейер</li>
+      </ol></div>
+    <div class="panel"><span class="label">Лестница продуктов</span>
+      <ul class="clean" style="margin-top:8px">
+        <li>Бесплатно: гайд «Claude Code за 7 дней»</li>
+        <li>990–2 990 ₽: мини-гайд или воркшоп, проверка спроса</li>
+        <li>Флагман: курс, старт при 300+ в листе ожидания</li>
+        <li>Дорого: внедрение под ключ для бизнеса</li>
+      </ul></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">09 · Прогноз</span>
+    <h2>Подписчики за 90 дней</h2>
+    <p class="muted">Гипотеза, не обещание. Разброс сценариев в основном зависит от одного-двух роликов, которые выстрелят.</p>
+  </div>
+  <div class="panel chart-wrap">
+    <svg viewBox="0 0 660 300" width="100%" style="min-width:480px;display:block" role="img" aria-label="Линии роста подписчиков: осторожно 1500, базово 6000, оптимистично 18000 к 90 дню">
+      <line class="gl" x1="56" y1="260" x2="616" y2="260"/>
+      <line class="gl" x1="56" y1="183.3" x2="616" y2="183.3"/>
+      <line class="gl" x1="56" y1="106.7" x2="616" y2="106.7"/>
+      <line class="gl" x1="56" y1="30" x2="616" y2="30"/>
+      <text x="48" y="264" text-anchor="end">0</text>
+      <text x="48" y="187" text-anchor="end">6 000</text>
+      <text x="48" y="111" text-anchor="end">12 000</text>
+      <text x="48" y="34" text-anchor="end">18 000</text>
+      <text x="56" y="282" text-anchor="middle">день 0</text>
+      <text x="242.7" y="282" text-anchor="middle">30</text>
+      <text x="429.3" y="282" text-anchor="middle">60</text>
+      <text x="616" y="282" text-anchor="middle">90</text>
+      <polyline fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-dasharray="5 4" points="56,260 242.7,256.2 429.3,248.5 616,240.8"/>
+      <polyline fill="none" stroke="var(--accent)" stroke-width="3" points="56,260 242.7,247.2 429.3,221.7 616,183.3"/>
+      <polyline fill="none" stroke="var(--teal)" stroke-width="2.5" points="56,260 242.7,221.7 429.3,145 616,30"/>
+      <circle cx="616" cy="240.8" r="4" fill="var(--muted)"/>
+      <circle cx="616" cy="183.3" r="5" fill="var(--accent)"/>
+      <circle cx="616" cy="30" r="4" fill="var(--teal)"/>
+      <text x="606" y="232" text-anchor="end" style="fill:var(--muted)">осторожно 1 500</text>
+      <text x="606" y="175" text-anchor="end" style="fill:var(--accent);font-weight:600">базово 6 000</text>
+      <text x="606" y="48" text-anchor="end" style="fill:var(--teal)">оптимистично 18 000</text>
+    </svg>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Метрика каждую неделю</th><th>Норма</th><th>Хорошо</th></tr></thead>
+      <tbody>
+        <tr><td>Удержание 3 секунды</td><td class="num">60%</td><td class="num">75%+</td></tr>
+        <tr><td>Средний досмотр</td><td class="num">50%</td><td class="num">70%+</td></tr>
+        <tr><td>Сохранения / охват</td><td class="num">1%</td><td class="num">3%+</td></tr>
+        <tr><td>Пересылки / охват</td><td class="num">0,5%</td><td class="num">2%+</td></tr>
+        <tr><td>Подписки на 1 000 охвата</td><td class="num">3</td><td class="num">10+</td></tr>
+        <tr><td>Слово ГАЙД в директ за неделю</td><td class="num">10</td><td class="num">50+</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">10 · Риски</span>
+    <h2>Что может пойти не так</h2>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Риск</th><th>Что делаем</th></tr></thead>
+      <tbody>
+        <tr><td>Ошибки в цифрах сравнений</td><td>Только свои замеры, дата и версия модели в кадре</td></tr>
+        <tr><td>Аудитория устала от «ИИ-контента»</td><td>Реальные кейсы и закулисье; со временем твоё лицо или голос</td></tr>
+        <tr><td>Метка AI и охваты</td><td>Ставим метку честно: ИИ-автор и есть фишка аккаунта</td></tr>
+        <tr><td>Товарные знаки</td><td>Ник и аватар без логотипов Anthropic и OpenAI</td></tr>
+        <tr><td>Бан за автоматизацию</td><td>Публикация вручную или через официальный Graph API</td></tr>
+        <tr><td>Конкуренты вроде @nikitadik.ai</td><td>Реальные тесты, хук в первом кадре, читаемость, голос, воронка</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="label">11 · Решения за тобой</span>
+    <h2>Что нужно, чтобы начать фазу 0</h2>
+  </div>
+  <ol class="qs panel">
+    <li><span><b>Имя и ник.</b> «ИИ на смене» (@ii.na.smene) или свой вариант</span></li>
+    <li><span><b>Лицо.</b> Без лица, твой клонированный голос или иногда твоё видео</span></li>
+    <li><span><b>Аккаунты.</b> Новый Instagram (Business) и Telegram-канал заводишь ты</span></li>
+    <li><span><b>Бюджет и ключи.</b> Сумма в месяц и API-ключи моделей для реальных тестов</span></li>
+    <li><span><b>«Да» на старт.</b> Шаблоны T1, T2, T4, T5 и пилотный рилс «одна задача — три модели»</span></li>
+  </ol>
+</section>
+
+<footer>Текстовая версия: <span class="mono">ai-page/STRATEGY.md</span> в репозитории content-. Помощник для разбора референсов: <span class="mono">ai-page/tools/reel_grab.js</span>.</footer>
+</div>
